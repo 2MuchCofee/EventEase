@@ -1,0 +1,43 @@
+<!-- filepath: e:\Projects\EventEase\core\templates\announcement_channel.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcement Channel - {{ event.event_name }}</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Announcement Channel for {{ event.event_name }}</h1>
+        <p>Role: {{ role }}</p>
+        <p>Phone: {{ phone }}</p>
+    </header>
+    
+    <main>
+        <h2>Announcements</h2>
+        <ul>
+            {% for announcement in announcements %}
+                <li>
+                    <strong>{{ announcement.timestamp|date:"Y-m-d H:i" }}:</strong> {{ announcement.text }}
+                </li>
+            {% empty %}
+                <li>No announcements yet.</li>
+            {% endfor %}
+        </ul>
+
+        {% if role == 'admin' %}
+            <h3>Post an Announcement</h3>
+            <form method="POST">
+                {% csrf_token %}
+                <textarea name="announcement" rows="4" required></textarea><br>
+                <button type="submit">Post Announcement</button>
+            </form>
+        {% endif %}
+    </main>
+
+    <footer>
+        <a href="{% url 'event_dashboard' event.event_id %}">Back to Event Dashboard</a>
+    </footer>
+</body>
+</html>

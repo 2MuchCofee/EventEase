@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EventEase - Home</title>
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+</head>
+<body>
+    <header>
+        <h1>Welcome to EventEase</h1>
+        <nav>
+            <ul>
+                <li><a href="{% url 'create_event' %}">Create Event</a></li>
+                <li><a href="{% url 'join_event' %}">Join Event</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <section>
+            <h2>About EventEase</h2>
+            <p>Your one-stop solution for managing events efficiently. Create, join, and manage events with ease.</p>
+        </section>
+    </main>
+    <footer>
+        <p>&copy; 2023 EventEase. All rights reserved.</p>
+    </footer>
+</body>
+</html>

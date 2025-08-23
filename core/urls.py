@@ -9,4 +9,5 @@ urlpatterns = [
     path('event/<str:event_id>/announcements/', views.announcement_channel, name='announcement_channel'),
     path('event/<str:event_id>/public/', views.public_channel, name='public_channel'),
     path('event/<str:event_id>/tickets/', views.ticket_channel, name='ticket_channel'),
+    path('event/<str:event_id>/walkie/', views.walkie_talkie, name='walkie_talkie'),
 ]

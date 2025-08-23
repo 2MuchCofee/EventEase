@@ -1,0 +1,157 @@
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>Walkie Talkie - {{ event.event_name }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .panel { max-width: 640px; margin: auto; }
+        .peers { margin-top: 12px; }
+        button { padding: 10px 16px; font-size: 16px; }
+        #status { margin-top: 8px; color: #333; }
+    </style>
+</head>
+<body>
+<div class="panel">
+    <h1>Walkie-Talkie — {{ event.event_name }}</h1>
+    <p>Your peer id: <strong id="myPeer">{{ my_peer_id }}</strong></p>
+    <p>Logged in as volunteer phone: <strong>{{ phone }}</strong></p>
+
+    <div class="controls">
+        <button id="connectBtn">Connect to Peers</button>
+        <button id="ptt" disabled>Push-to-talk (Hold)</button>
+    </div>
+    <div id="status">Status: <span id="statusText">idle</span></div>
+
+    <div class="peers">
+        <h3>Peers</h3>
+        <ul id="peersList"></ul>
+    </div>
+</div>
+
+<!-- PeerJS CDN -->
+<script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
+<script>
+(function(){
+    const myPeerId = '{{ my_peer_id }}';
+    const otherPeers = JSON.parse('{{ other_peers_json|escapejs }}');
+
+    const connectBtn = document.getElementById('connectBtn');
+    const ptt = document.getElementById('ptt');
+    const peersList = document.getElementById('peersList');
+    const statusText = document.getElementById('statusText');
+
+    let peer = null;
+    let localStream = null;
+    let openConnections = {};
+
+    function logStatus(s){ statusText.textContent = s; }
+
+    function addPeerToList(id){
+        const li = document.createElement('li');
+        li.textContent = id;
+        li.id = 'peer-' + id;
+        peersList.appendChild(li);
+    }
+
+    function removePeerFromList(id){
+        const el = document.getElementById('peer-' + id);
+        if(el) el.remove();
+    }
+
+    async function ensureMicrophone(){
+        if(localStream) return localStream;
+        try{
+            localStream = await navigator.mediaDevices.getUserMedia({ audio: true });
+            return localStream;
+        }catch(err){
+            alert('Microphone access is required for walkie-talkie.');
+            throw err;
+        }
+    }
+
+    connectBtn.addEventListener('click', async function(){
+        if(peer) return;
+        logStatus('initializing peer');
+        peer = new Peer(myPeerId, { debug: 2 });
+
+        peer.on('open', id => {
+            logStatus('peer open: ' + id);
+            connectBtn.disabled = true;
+            ptt.disabled = false;
+            // show peers
+            otherPeers.forEach(p => addPeerToList(p));
+        });
+
+        peer.on('call', call => {
+            // when someone calls us, answer with our microphone (receive audio)
+            call.answer(null); // answer without sending stream (we'll only send when talking)
+            call.on('stream', remoteStream => {
+                // play remote audio
+                const audio = document.createElement('audio');
+                audio.srcObject = remoteStream;
+                audio.autoplay = true;
+                audio.controls = false;
+                document.body.appendChild(audio);
+            });
+        });
+
+        peer.on('error', err => {
+            console.error(err); logStatus('peer error');
+        });
+
+        // Pre-place calls to peers so incoming audio is available quickly
+        for(const pid of otherPeers){
+            try{
+                const call = peer.call(pid, null); // no stream now
+                openConnections[pid] = call;
+                call.on('stream', remoteStream => {
+                    const audio = document.createElement('audio');
+                    audio.srcObject = remoteStream;
+                    audio.autoplay = true;
+                    document.body.appendChild(audio);
+                });
+            }catch(e){
+                console.warn('call failed to', pid, e);
+            }
+        }
+    });
+
+    // Push-to-talk behavior: while held, get mic and send stream to all peers
+    ptt.addEventListener('mousedown', async () => {
+        try{
+            logStatus('getting mic...');
+            const stream = await ensureMicrophone();
+            logStatus('sending audio');
+            // For each peer, call with stream
+            for(const pid of otherPeers){
+                try{
+                    // Close previous call if exists
+                    if(openConnections[pid] && openConnections[pid].close) openConnections[pid].close();
+                    const call = peer.call(pid, stream);
+                    openConnections[pid] = call;
+                }catch(e){ console.warn(e); }
+            }
+        }catch(e){ logStatus('mic denied'); }
+    });
+    ptt.addEventListener('mouseup', () => {
+        logStatus('idle');
+        // stop sending: close outgoing calls and stop tracks
+        for(const pid in openConnections){
+            try{ openConnections[pid].close(); }catch(e){}
+            delete openConnections[pid];
+        }
+        if(localStream){
+            localStream.getTracks().forEach(t => t.stop());
+            localStream = null;
+        }
+    });
+
+    // mobile touch events
+    ptt.addEventListener('touchstart', async (e) => { e.preventDefault(); ptt.dispatchEvent(new Event('mousedown')); });
+    ptt.addEventListener('touchend', (e) => { e.preventDefault(); ptt.dispatchEvent(new Event('mouseup')); });
+
+})();
+</script>
+</body>
+</html>

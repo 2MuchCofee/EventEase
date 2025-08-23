@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Public Channel</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f7f9fb;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 600px;
+            background: #fff;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
+            margin-top: 2.5rem;
+        }
+        h2 {
+            font-weight: 600;
+            color: #1a237e;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .public-list {
+            background: #f1f5f9;
+            border-radius: 12px;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            max-height: 320px;
+            overflow-y: auto;
+        }
+        .public-message {
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(30,64,175,0.04);
+            padding: 1rem 1.2rem;
+            margin-bottom: 1.2rem;
+        }
+        .public-message strong {
+            color: #43a047;
+        }
+        .public-message .text-muted {
+            font-size: 0.95em;
+        }
+        .form-control, textarea {
+            border-radius: 8px;
+            font-size: 1.05em;
+        }
+        .btn-success {
+            background: #43a047;
+            border: none;
+            font-weight: 600;
+            border-radius: 8px;
+        }
+        .btn-success:hover {
+            background: #388e3c;
+        }
+        .btn-secondary {
+            border-radius: 8px;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+            }
+            h2 {
+                font-size: 1.3rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <h2>Public Channel</h2>
+    <form method="post" class="mb-3">
+        {% csrf_token %}
+        <textarea class="form-control mb-2" name="message" rows="2" placeholder="Write a message..."></textarea>
+        <button type="submit" class="btn btn-success w-100">Send</button>
+    </form>
+    <div class="public-list">
+        {% for m in messages %}
+            <div class="public-message"><strong>{{ m.sender }}</strong> <span class="text-muted">({{ m.timestamp|date:'Y-m-d H:i' }})</span><br>{{ m.text }}</div>
+        {% empty %}
+            <em>No messages yet.</em>
+        {% endfor %}
+    </div>
+    <a href="{% url 'event_dashboard' event.event_id %}?role={{ role }}&phone={{ phone }}" class="btn btn-secondary mt-3 w-100">Back to Dashboard</a>
+</div>
+</body>
+</html>

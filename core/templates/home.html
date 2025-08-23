@@ -4,48 +4,55 @@
     <meta charset="UTF-8">
     <title>EventEase - Home</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
     <style>
         body {
-            font-family: 'Segoe UI', Arial, sans-serif;
-            background: #f5f7fa;
+            font-family: 'Inter', Arial, sans-serif;
+            background: #f7f9fb;
+            min-height: 100vh;
             display: flex;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            margin: 0;
         }
         .container {
+            max-width: 400px;
             background: #fff;
-            padding: 2.5rem 2rem;
-            border-radius: 12px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-            width: 320px;
+            border-radius: 18px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            padding: 2.5rem 1.5rem 2rem 1.5rem;
             text-align: center;
         }
         h1 {
+            font-weight: 600;
+            color: #1a237e;
             margin-bottom: 1.5rem;
-            color: #2d3748;
         }
         input[type="text"] {
             width: 90%;
             padding: 0.7rem;
             margin-bottom: 1.5rem;
             border: 1px solid #cbd5e1;
-            border-radius: 6px;
-            font-size: 1rem;
+            border-radius: 8px;
+            font-size: 1.05em;
+        }
+        button, .option-btn {
+            font-weight: 600;
+            border-radius: 8px;
+            font-size: 1.05em;
+            width: 100%;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s, color 0.2s;
         }
         button {
-            background: #2563eb;
+            background: #1976d2;
             color: #fff;
             border: none;
-            padding: 0.7rem 1.5rem;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s;
         }
         button:hover {
-            background: #1e40af;
+            background: #1565c0;
         }
         .options {
             display: flex;
@@ -55,17 +62,22 @@
         }
         .option-btn {
             background: #f1f5f9;
-            color: #2563eb;
-            border: 2px solid #2563eb;
-            padding: 0.7rem 0;
-            border-radius: 6px;
-            font-size: 1rem;
-            cursor: pointer;
-            transition: background 0.2s, color 0.2s;
+            color: #1976d2;
+            border: 2px solid #1976d2;
+            text-decoration: none;
+            text-align: center;
         }
         .option-btn:hover {
-            background: #2563eb;
+            background: #1976d2;
             color: #fff;
+        }
+        @media (max-width: 600px) {
+            .container {
+                padding: 1.2rem 0.5rem 1.5rem 0.5rem;
+            }
+            h1 {
+                font-size: 1.3rem;
+            }
         }
     </style>
 </head>
@@ -78,10 +90,10 @@
             <button onclick="proceed()">Proceed</button>
         </div>
         <div id="options" style="display:none;">
-            <h2>Hello, <span id="display-name"></span>!</h2>
+            <h2 style="font-size:1.2em; font-weight:600; color:#1976d2;">Hello, <span id="display-name"></span>!</h2>
             <div class="options">
-                <button class="option-btn" onclick="window.location.href='create_event.html'">Create Event</button>
-                <button class="option-btn" onclick="window.location.href='join_event.html'">Join Event</button>
+                <a href="{% url 'create_event' %}" class="option-btn">Create Event</a>
+                <a href="{% url 'join_event' %}" class="option-btn">Join Event</a>
             </div>
         </div>
     </div>

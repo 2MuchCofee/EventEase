@@ -11,43 +11,60 @@
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
-            background: #f7f9fb;
+            background: linear-gradient(135deg, #181c2f 0%, #232946 100%);
             min-height: 100vh;
         }
         .container {
             max-width: 400px;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            background: rgba(30,34,54,0.98);
+            border-radius: 20px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.25), 0 0 0 1.5px #232946;
             padding: 2.5rem 1.5rem 2rem 1.5rem;
             margin-top: 2.5rem;
         }
         h2 {
-            font-weight: 600;
-            color: #1a237e;
+            font-weight: 700;
+            color: #f4faff;
             margin-bottom: 1.5rem;
             text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 12px #23294699;
         }
         .form-label {
             font-weight: 600;
-            color: #43a047;
+            color: #eebd35;
         }
         .form-control, textarea {
-            border-radius: 8px;
+            border-radius: 10px;
             font-size: 1.05em;
+            background: #232946;
+            color: #f4faff;
+            border: 1.5px solid #393e5c;
+        }
+        .form-control:focus, textarea:focus {
+            border: 1.5px solid #eebd35;
+            outline: none;
+            background: #232946;
+            color: #fff;
         }
         .btn-success {
-            background: #43a047;
+            background: linear-gradient(90deg, #eebd35 0%, #43a047 100%);
+            color: #181c2f;
             border: none;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 10px;
             width: 100%;
+            padding-top: 1.1rem;
+            padding-bottom: 1.1rem;
+            box-shadow: 0 2px 12px 0 #23294633;
         }
         .btn-success:hover {
-            background: #388e3c;
+            background: linear-gradient(90deg, #43a047 0%, #eebd35 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px 0 #43a04755;
         }
         .alert-danger {
-            border-radius: 8px;
+            border-radius: 10px;
         }
         @media (max-width: 600px) {
             .container {

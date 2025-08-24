@@ -11,29 +11,109 @@
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
-            background: #f7f9fb;
+            background: linear-gradient(135deg, #181c2f 0%, #232946 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .user-dropdown {
+            position: absolute;
+            top: 30px;
+            right: 40px;
+            z-index: 100;
+        }
+        .user-icon-btn {
+            background: #1976d2;
+            border: none;
+            outline: none;
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(30,64,175,0.10);
+            transition: box-shadow 0.2s;
+        }
+        .user-icon-btn:hover {
+            box-shadow: 0 4px 16px rgba(30,64,175,0.18);
+        }
+        .user-icon-img {
+            color: #fff;
+            font-size: 2rem;
+            user-select: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 100%;
+            height: 100%;
+        }
+        .dropdown-menu-custom {
+            position: absolute;
+            top: 80px;
+            right: 0;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.13);
+            min-width: 170px;
+            padding: 0.5rem 0;
+            opacity: 0;
+            transform: translateY(-16px) scaleY(0.95);
+            pointer-events: none;
+            transition: opacity 0.22s cubic-bezier(.4,0,.2,1), transform 0.22s cubic-bezier(.4,0,.2,1);
+        }
+        .dropdown-menu-custom.show {
+            opacity: 1;
+            transform: translateY(0) scaleY(1);
+            pointer-events: auto;
+        }
+        .dropdown-item-custom {
+            display: flex;
+            align-items: center;
+            gap: 0.7rem;
+            padding: 0.7rem 1.2rem;
+            color: #1a237e;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            background: none;
+            width: 100%;
+            font-size: 1rem;
+            transition: background 0.15s;
+        }
+        .dropdown-item-custom:hover {
+            background: #f1f5f9;
+        }
+        .dropdown-icon {
+            font-size: 1.3rem;
         }
         .container {
-            max-width: 700px;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            max-width: 400px;
+            background: rgba(30,34,54,0.98);
+            border-radius: 20px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.25), 0 0 0 1.5px #232946;
             padding: 2.5rem 1.5rem 2rem 1.5rem;
-            margin-top: 2.5rem;
+            text-align: center;
         }
         h2 {
-            font-weight: 600;
-            color: #1a237e;
+            font-weight: 700;
+            color: #f4faff;
             margin-bottom: 1.5rem;
-            text-align: center;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 12px #23294699;
         }
         .info {
             text-align: center;
             margin-bottom: 1.5rem;
         }
+        .info-label {
+            color: #f4faff;
+            font-weight: 500;
+        }
         .info strong {
-            color: #1976d2;
+            color: #eebd35;
         }
         .dashboard-links {
             display: flex;
@@ -45,46 +125,52 @@
             flex: 1 1 200px;
             min-width: 200px;
             max-width: 220px;
-            background: #f1f5f9;
+            background: #181c2f;
             border-radius: 14px;
             box-shadow: 0 2px 8px rgba(30,64,175,0.04);
             padding: 1.5rem 1rem;
             text-align: center;
             margin-bottom: 1.5rem;
+            color: #f4faff;
         }
         .dashboard-card h4 {
-            color: #1976d2;
+            color: #eebd35;
             font-weight: 600;
             margin-bottom: 1rem;
         }
         .dashboard-card .btn {
             width: 100%;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px 0 #23294633;
+            padding-top: 1.1rem;
+            padding-bottom: 1.1rem;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
         .btn-outline-primary {
-            border-color: #1976d2;
-            color: #1976d2;
+            border: none;
+            background: #eebd35;
+            color: #232946;
         }
         .btn-outline-primary:hover {
-            background: #1976d2;
-            color: #fff;
+            background: #ffd86b;
         }
         .btn-outline-success {
-            border-color: #43a047;
-            color: #43a047;
+            border: none;
+            background: #eebd35;
+            color: #232946;
         }
         .btn-outline-success:hover {
-            background: #43a047;
-            color: #fff;
+            background: #ffd86b;
         }
         .btn-outline-warning {
-            border-color: #ffb300;
-            color: #ffb300;
+            border: none;
+            background: #eebd35;
+            color: #232946;
         }
         .btn-outline-warning:hover {
-            background: #ffb300;
-            color: #fff;
+            background: #ffd86b;
         }
         @media (max-width: 700px) {
             .container {
@@ -98,13 +184,40 @@
     </style>
 </head>
 <body>
+<div class="user-dropdown">
+    <button class="user-icon-btn" id="userDropdownBtn" aria-label="User menu">
+        <span class="user-icon-img">
+            <!-- User SVG icon -->
+            <svg width="32" height="32" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" style="display:block;margin:auto;">
+                <ellipse cx="12" cy="8" rx="5" ry="6" fill="white"/>
+                <ellipse cx="12" cy="19" rx="8" ry="4" fill="white"/>
+            </svg>
+        </span>
+    </button>
+    <div class="dropdown-menu-custom" id="userDropdownMenu">
+        <button class="dropdown-item-custom" id="qrBtn">
+            <span class="dropdown-icon">
+                <!-- QR SVG icon -->
+                <svg width="20" height="20" fill="none" stroke="#1a237e" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="5" height="5"/><rect x="16" y="3" width="5" height="5"/><rect x="3" y="16" width="5" height="5"/><rect x="16" y="16" width="5" height="5"/><rect x="10" y="10" width="4" height="4"/></svg>
+            </span>
+            QR Code
+        </button>
+        <button class="dropdown-item-custom" id="logoutBtn">
+            <span class="dropdown-icon">
+                <!-- Shutdown SVG icon -->
+                <svg width="20" height="20" fill="none" stroke="#d32f2f" stroke-width="2" viewBox="0 0 24 24"><path d="M12 2v10"/><circle cx="12" cy="16" r="6"/></svg>
+            </span>
+            Log Out
+        </button>
+    </div>
+</div>
 <div class="container">
     <h2>Event Dashboard</h2>
     <div class="info">
-        <div><strong>{{ event.event_name }}</strong></div>
-        <div>Event ID: <strong>{{ event.event_id }}</strong></div>
-        <div>Your Phone: <strong>{{ phone }}</strong></div>
-        <div>Your Role: <strong>{{ role|title }}</strong></div>
+    <div><strong>{{ event.event_name }}</strong></div>
+    <div><span class="info-label">Event ID:</span> <strong>{{ event.event_id }}</strong></div>
+    <div><span class="info-label">Your Phone:</span> <strong>{{ phone }}</strong></div>
+    <div><span class="info-label">Your Role:</span> <strong>{{ role|title }}</strong></div>
     </div>
     <div class="dashboard-links">
         <div class="dashboard-card">
@@ -123,3 +236,26 @@
 </div>
 </body>
 </html>
+
+<script>
+// Dropdown toggle logic
+const userBtn = document.getElementById('userDropdownBtn');
+const menu = document.getElementById('userDropdownMenu');
+userBtn.addEventListener('click', function(e) {
+    e.stopPropagation();
+    menu.classList.toggle('show');
+});
+document.addEventListener('click', function(e) {
+    if (!menu.contains(e.target) && !userBtn.contains(e.target)) {
+        menu.classList.remove('show');
+    }
+});
+// Logout button logic
+document.getElementById('logoutBtn').onclick = function() {
+    window.location.href = '/';
+};
+// QR button logic (to be implemented later)
+document.getElementById('qrBtn').onclick = function() {
+    // Placeholder for QR code action
+};
+</script>

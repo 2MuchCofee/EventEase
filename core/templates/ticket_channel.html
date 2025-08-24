@@ -11,25 +11,29 @@
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
-            background: #f7f9fb;
+            background: linear-gradient(135deg, #181c2f 0%, #232946 100%);
             min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
         }
         .container {
-            max-width: 600px;
-            background: #fff;
-            border-radius: 18px;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.07);
+            max-width: 400px;
+            background: rgba(30,34,54,0.98);
+            border-radius: 20px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.25), 0 0 0 1.5px #232946;
             padding: 2.5rem 1.5rem 2rem 1.5rem;
-            margin-top: 2.5rem;
-        }
-        h2 {
-            font-weight: 600;
-            color: #1a237e;
-            margin-bottom: 1.5rem;
             text-align: center;
         }
+        h2 {
+            font-weight: 700;
+            color: #f4faff;
+            margin-bottom: 1.5rem;
+            letter-spacing: 1px;
+            text-shadow: 0 2px 12px #23294699;
+        }
         .ticket-list {
-            background: #f1f5f9;
+            background: #232946;
             border-radius: 12px;
             padding: 1rem;
             margin-top: 1.5rem;
@@ -37,50 +41,89 @@
             overflow-y: auto;
         }
         .ticket {
-            background: #fff;
+            background: #181c2f;
             border-radius: 10px;
             box-shadow: 0 2px 8px rgba(30,64,175,0.04);
             padding: 1rem 1.2rem;
             margin-bottom: 1.2rem;
+            color: #f4faff;
         }
         .ticket strong {
-            color: #1976d2;
+            color: #eebd35;
         }
         .ticket .text-muted {
             font-size: 0.95em;
+            color: #fff !important;
+        }
+        .ticket-response .text-muted {
+            color: #fff !important;
         }
         .ticket-response {
-            background: #e3f2fd;
+            background: #393e5c;
             border-radius: 8px;
             padding: 0.5rem 1rem;
             margin-top: 0.5rem;
             margin-left: 1.2rem;
+            color: #ffd86b;
         }
         .form-control, textarea {
             border-radius: 8px;
             font-size: 1.05em;
+            background: #232946;
+            color: #f4faff;
+            border: 1.5px solid #393e5c;
+        }
+        .form-control::placeholder,
+        textarea::placeholder {
+            color: #fff;
+            opacity: 1;
+        }
+        .form-control:focus, textarea:focus {
+            border: 1.5px solid #eebd35;
+            outline: none;
         }
         .btn-warning {
-            background: #ffb300;
+            background: #eebd35;
+            color: #232946;
             border: none;
-            color: #fff;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px 0 #23294633;
+            padding-top: 1.1rem;
+            padding-bottom: 1.1rem;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
         .btn-warning:hover {
-            background: #ffa000;
+            background: #ffd86b;
         }
         .btn-primary {
-            background: #1976d2;
+            background: #eebd35;
+            color: #232946;
             border: none;
             font-weight: 600;
-            border-radius: 8px;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px 0 #23294633;
+            padding-top: 1.1rem;
+            padding-bottom: 1.1rem;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
         }
         .btn-primary:hover {
-            background: #1565c0;
+            background: #ffd86b;
         }
         .btn-secondary {
-            border-radius: 8px;
+            border-radius: 10px;
+            background: #232946;
+            color: #eebd35;
+            font-weight: 600;
+            box-shadow: 0 2px 12px 0 #23294633;
+            border: 1.5px solid #393e5c;
+            margin-bottom: 0.7rem;
+            transition: background 0.2s, color 0.2s, box-shadow 0.2s;
+        }
+        .btn-secondary:hover {
+            background: #393e5c;
         }
         @media (max-width: 600px) {
             .container {
@@ -106,7 +149,7 @@
         {% for t in tickets %}
             {% if role == 'admin' or t.sender == phone %}
             <div class="ticket">
-                <strong>{{ t.sender }}</strong> <span class="text-muted">({{ t.timestamp|date:'Y-m-d H:i' }})</span><br>
+                <strong>{{ t.sender }}</strong> <span class="text-muted">({{ t.timestamp|date:'Y-m-d H:i' }}):</span><br>
                 <span>{{ t.text }}</span>
                 {% if role == 'admin' %}
                     <form method="post" class="mt-2">
@@ -118,7 +161,7 @@
                 {% endif %}
                 {% if t.responses %}
                     {% for r in t.responses %}
-                        <div class="ticket-response"><span class="text-primary">Admin:</span> {{ r.text }} <span class="text-muted">({{ r.timestamp|date:'Y-m-d H:i' }})</span></div>
+                        <div class="ticket-response"><span class="text-primary">Admin:</span> {{ r.text }} <span class="text-muted">({{ r.timestamp|date:'Y-m-d H:i' }}):</span></div>
                     {% endfor %}
                 {% endif %}
             </div>

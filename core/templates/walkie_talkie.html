@@ -69,21 +69,24 @@
 
 <!-- PeerJS CDN -->
 <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
-<script>
+    <script>
 (function(){
     const myPeerId = '{{ my_peer_id }}';
     const otherPeers = JSON.parse('{{ other_peers_json|escapejs }}');
 
     const connectBtn = document.getElementById('connectBtn');
-    const ptt = document.getElementById('ptt');
+    const holdBtn = document.getElementById('holdBtn');
     const peersList = document.getElementById('peersList');
-    const btnText = document.getElementById('holdBtn');
 
     let peer = null;
     let localStream = null;
     let openConnections = {};
 
-    function logStatus(s){ btnText.innerText = s; }
+    // Centralized status updater — always target the visible hold button
+    function logStatus(s){
+        if(holdBtn) holdBtn.innerText = s;
+        else console.log('status:', s);
+    }
 
     function addPeerToList(id){
         const li = document.createElement('li');
@@ -122,7 +125,7 @@
         if(peer) return;
         logStatus('initializing peer');
         connectBtn.hidden = true;
-        btnText.hidden = false
+        if(holdBtn) holdBtn.hidden = false;
         peer = new Peer(myPeerId, { debug: 2 });
         logStatus('Hold to Talk');
 
@@ -132,10 +135,9 @@
         });
 
         peer.on('call', call => {
-            // when someone calls us, answer with our microphone (receive audio)
-            call.answer(null); // answer without sending stream (we'll only send when talking)
+            // when someone calls us, answer (we'll only send when talking)
+            call.answer(null);
             call.on('stream', remoteStream => {
-                // play remote audio
                 const audio = document.createElement('audio');
                 audio.srcObject = remoteStream;
                 audio.autoplay = true;
@@ -166,39 +168,40 @@
     });
 
     // Push-to-talk behavior: while held, get mic and send stream to all peers
-    ptt.addEventListener('mousedown', async () => {
-        try{
-            // logStatus('getting mic...');
-            const stream = await ensureMicrophone();
-            logStatus('sending audio');
-            // For each peer, call with stream
-            for(const pid of otherPeers){
-                try{
-                    // Close previous call if exists
-                    if(openConnections[pid] && openConnections[pid].close) openConnections[pid].close();
-                    const call = peer.call(pid, stream);
-                    openConnections[pid] = call;
-                }catch(e){ console.warn(e); }
-            }
-        }catch(e){ logStatus('mic denied'); }
-    });
-    ptt.addEventListener('mouseup', () => {
-        logStatus('Hold to Speak');
-        holdBtn.innerText = "Talking..."
-        // stop sending: close outgoing calls and stop tracks
-        for(const pid in openConnections){
-            try{ openConnections[pid].close(); }catch(e){}
-            delete openConnections[pid];
-        }
-        if(localStream){
-            localStream.getTracks().forEach(t => t.stop());
-            localStream = null;
-        }
-    });
+    if(holdBtn){
+        holdBtn.addEventListener('mousedown', async () => {
+            try{
+                const stream = await ensureMicrophone();
+                logStatus('Talking...');
+                // For each peer, call with stream
+                for(const pid of otherPeers){
+                    try{
+                        if(openConnections[pid] && openConnections[pid].close) openConnections[pid].close();
+                        const call = peer.call(pid, stream);
+                        openConnections[pid] = call;
+                    }catch(e){ console.warn(e); }
+                }
+            }catch(e){ logStatus('mic denied'); }
+        });
 
-    // mobile touch events
-    ptt.addEventListener('touchstart', async (e) => { e.preventDefault(); ptt.dispatchEvent(new Event('mousedown')); });
-    ptt.addEventListener('touchend', (e) => { e.preventDefault(); ptt.dispatchEvent(new Event('mouseup')); });
+        holdBtn.addEventListener('mouseup', () => {
+            // revert to idle label
+            logStatus('Hold to Talk');
+            // stop sending: close outgoing calls and stop tracks
+            for(const pid in openConnections){
+                try{ openConnections[pid].close(); }catch(e){}
+                delete openConnections[pid];
+            }
+            if(localStream){
+                localStream.getTracks().forEach(t => t.stop());
+                localStream = null;
+            }
+        });
+
+        // mobile touch events
+        holdBtn.addEventListener('touchstart', async (e) => { e.preventDefault(); holdBtn.dispatchEvent(new Event('mousedown')); });
+        holdBtn.addEventListener('touchend', (e) => { e.preventDefault(); holdBtn.dispatchEvent(new Event('mouseup')); });
+    }
 
 })();
 </script>

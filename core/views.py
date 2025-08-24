@@ -1,3 +1,6 @@
+# Landing page with links to create/join event
+def landing(request):
+    return render(request, 'landing.html')
 from django.http import JsonResponse
 from django.views.decorators.csrf import csrf_exempt
 from .models import Attendance
@@ -37,13 +40,11 @@ def mark_attendance(request):
         return JsonResponse({'success': True})
     return JsonResponse({'success': False}, status=400)
 
+
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden
 import json
 from .models import Event
-
-def home(request):
-    return render(request, 'home.html')
 
 def create_event(request):
     error_message = None

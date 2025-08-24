@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>EventEase</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #181c2f 0%, #232946 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .landing-container {
+            background: rgba(30,34,54,0.98);
+            border-radius: 20px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.25), 0 0 0 1.5px #232946;
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+        h1 {
+            color: #eebd35;
+            margin-bottom: 2rem;
+            font-size: 2.2rem;
+        }
+        .landing-btn {
+            text-decoration: none;
+            display: block;
+            width: 100%;
+            margin: 1.2rem 0;
+            padding: 1.1rem 0;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(90deg, #eebd35 0%, #ff6f3c 100%);
+            color: #181c2f;
+            box-shadow: 0 2px 12px 0 #23294633;
+            cursor: pointer;
+            transition: background 0.18s, color 0.18s, box-shadow 0.18s;
+        }
+        .landing-btn:hover {
+            background: linear-gradient(90deg, #ff6f3c 0%, #eebd35 100%);
+            color: #fff;
+            box-shadow: 0 4px 16px 0 #ff6f3c55;
+        }
+    </style>
+</head>
+<body>
+<div class="landing-container">
+    <h1>Welcome to EventEase</h1>
+    <a href="/create-event/" class="landing-btn">Create Event</a>
+    <a href="/join-event/" class="landing-btn">Join Event</a>
+</div>
+</body>
+</html>

@@ -54,7 +54,7 @@ def join_event(request):
             else:
                 message = 'Phone number not allowed for this event.'
         except Event.DoesNotExist:
-            message = 'Event ID not found.'
+            message = 'Event ID not found.' 
     return render(request, 'join_event.html', {'message': message})
 
 # Event dashboard view

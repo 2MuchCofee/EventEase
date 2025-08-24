@@ -202,6 +202,19 @@
             </span>
             QR Code
         </button>
+        {% if role|lower == 'admin' %}
+        <button class="dropdown-item-custom" id="walkieDropdownBtn">
+            <span class="dropdown-icon">
+                <!-- Walkie Talkie SVG icon -->
+                <svg width="20" height="20" fill="none" stroke="#1976d2" stroke-width="2" viewBox="0 0 24 24">
+                    <rect x="6" y="7" width="12" height="13" rx="3" fill="#1976d2"/>
+                    <rect x="10" y="2" width="4" height="5" rx="2" fill="#eebd35"/>
+                    <circle cx="12" cy="15" r="2.5" fill="#fff"/>
+                </svg>
+            </span>
+            Walkie Talkie
+        </button>
+        {% endif %}
         <button class="dropdown-item-custom" id="logoutBtn">
             <span class="dropdown-icon">
                 <!-- Shutdown SVG icon -->
@@ -238,6 +251,10 @@
 </html>
 
 <script>
+// Pass Django variables to JS
+const eventId = "{{ event.event_id }}";
+const phone = "{{ phone }}";
+const role = "{{ role }}";
 // Dropdown toggle logic
 const userBtn = document.getElementById('userDropdownBtn');
 const menu = document.getElementById('userDropdownMenu');
@@ -258,4 +275,11 @@ document.getElementById('logoutBtn').onclick = function() {
 document.getElementById('qrBtn').onclick = function() {
     // Placeholder for QR code action
 };
+// Walkie Talkie dropdown button logic (only for admins)
+var walkieBtn = document.getElementById('walkieDropdownBtn');
+if (walkieBtn) {
+    walkieBtn.onclick = function() {
+        window.location.href = '/event/' + eventId + '/walkie/?role=' + role + '&phone=' + phone;
+    };
+}
 </script>

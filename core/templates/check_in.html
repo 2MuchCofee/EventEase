@@ -6,6 +6,7 @@
     <title>Check-In - {{ event.event_name }}</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         body {
             font-family: 'Inter', Arial, sans-serif;
@@ -103,12 +104,14 @@
                             <polyline points="5 11 9 15 15 7" />
                         </svg>
                     </span>
+                    <span class="qr-box" id="qr-{{ forloop.counter0 }}"></span>
                 </div>
             {% endfor %}
         {% else %}
             <div style="color:#888;">No participants found.</div>
         {% endif %}
 </body>
+{{ participants|json_script:"participants-data" }}
 <script>
 function toggleAttendance(el) {
     el.classList.toggle('checked');
@@ -123,6 +126,70 @@ function toggleAttendance(el) {
         body: `event_id={{ event.event_id }}&phone=${phone}&checked_in=${checked}`
     });
 }
+
+
+window.addEventListener('DOMContentLoaded', function() {
+    var participants = JSON.parse(document.getElementById('participants-data').textContent);
+    var eventId = "{{ event.event_id|escapejs }}";
+        participants.forEach(function(p, idx) {
+            var qrBoxId = "qr-" + idx;
+            var qrPayload = eventId + "|" + p;
+            var qrBox = document.getElementById(qrBoxId);
+            if (qrBox) {
+                new QRCode(qrBox, {
+                    text: qrPayload,
+                    width: 48,
+                    height: 48,
+                    correctLevel: QRCode.CorrectLevel.L
+                });
+                // Add download button functionality
+                var downloadBtn = document.createElement('button');
+                downloadBtn.className = 'qr-download-btn';
+                downloadBtn.setAttribute('data-qr-id', qrBoxId);
+                downloadBtn.innerText = 'Download QR Code';
+                qrBox.appendChild(downloadBtn);
+            }
+    });
+        document.querySelectorAll('.qr-download-btn').forEach(function(btn) {
+            btn.addEventListener('click', function() {
+                var qrId = btn.getAttribute('data-qr-id');
+                var qrBox = document.getElementById(qrId);
+                if (!qrBox) return;
+                var img = qrBox.querySelector('img');
+                var canvas = qrBox.querySelector('canvas');
+                var srcCanvas = null;
+                if (canvas) {
+                    srcCanvas = canvas;
+                } else if (img) {
+                    // Create a canvas from the img
+                    srcCanvas = document.createElement('canvas');
+                    srcCanvas.width = img.width;
+                    srcCanvas.height = img.height;
+                    var ctx = srcCanvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+                }
+                if (srcCanvas) {
+                    // Add white padding (quiet zone)
+                    var pad = 24; // pixels of white border
+                    var size = srcCanvas.width;
+                    var outCanvas = document.createElement('canvas');
+                    outCanvas.width = size + pad * 2;
+                    outCanvas.height = size + pad * 2;
+                    var outCtx = outCanvas.getContext('2d');
+                    outCtx.fillStyle = '#fff';
+                    outCtx.fillRect(0, 0, outCanvas.width, outCanvas.height);
+                    outCtx.drawImage(srcCanvas, pad, pad);
+                    var dataUrl = outCanvas.toDataURL('image/png');
+                    var a = document.createElement('a');
+                    a.href = dataUrl;
+                    a.download = qrId + '.png';
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            });
+        });
+});
 </script>
     </div>
     <button class="back-btn" onclick="window.history.back()">Back</button>

@@ -11,5 +11,6 @@ urlpatterns = [
     path('event/<str:event_id>/tickets/', views.ticket_channel, name='ticket_channel'),
     path('event/<str:event_id>/walkie/', views.walkie_talkie, name='walkie_talkie'),
     path('event/<str:event_id>/check-in/', views.check_in, name='check_in'),
+    path('event/<str:event_id>/qr-checkin/', views.qr_check_in, name='qr_check_in'),
     path('mark_attendance/', views.mark_attendance, name='mark_attendance'),
 ]

@@ -42,6 +42,59 @@ from django.http import HttpResponseForbidden
 import json
 from .models import Event
 
+
+def qr_check_in(request, event_id):
+    """Render a QR check-in UI for admins. Accepts POST (ajax) with a QR payload.
+
+    Expected QR payload formats (simple, tolerant):
+    - "<event_id>|<phone>"
+    - JSON: {"event_id": "...", "phone": "..."}
+    - plain phone number (assumes the event_id from the URL)
+    """
+    event = get_object_or_404(Event, event_id=event_id)
+    role = request.GET.get('role', 'participant')
+    phone = request.GET.get('phone', '')
+
+    # Only allow admins
+    if role.lower() != 'admin':
+        return HttpResponseForbidden('QR Check-In access restricted to admins.')
+
+    if request.method == 'POST':
+        payload = request.POST.get('payload', '').strip()
+        parsed_phone = None
+        parsed_event_id = event_id
+        # Try JSON
+        try:
+            data = json.loads(payload)
+            if isinstance(data, dict):
+                parsed_phone = data.get('phone') or data.get('phone_number')
+                parsed_event_id = data.get('event_id') or parsed_event_id
+        except Exception:
+            # Not JSON, try pipe-separated
+            if '|' in payload:
+                parts = payload.split('|')
+                if len(parts) >= 2:
+                    parsed_event_id = parts[0].strip()
+                    parsed_phone = parts[1].strip()
+            else:
+                # Assume just a phone number
+                parsed_phone = payload
+
+        # Validate event id
+        if parsed_event_id != event.event_id:
+            return JsonResponse({'success': False, 'error': 'Event ID mismatch.'}, status=400)
+
+        if not parsed_phone:
+            return JsonResponse({'success': False, 'error': 'No phone parsed from payload.'}, status=400)
+
+        # mark attendance
+        att, _ = Attendance.objects.get_or_create(event=event, phone=parsed_phone)
+        att.checked_in = True
+        att.save()
+        return JsonResponse({'success': True, 'phone': parsed_phone})
+
+    return render(request, 'qr_check_in.html', {'event': event, 'role': role, 'phone': phone})
+
 def home(request):
     return render(request, 'home.html')
 

@@ -277,9 +277,9 @@ document.addEventListener('click', function(e) {
 document.getElementById('logoutBtn').onclick = function() {
     window.location.href = '/';
 };
-// QR button logic (to be implemented later)
+// QR button logic: open QR check-in page
 document.getElementById('qrBtn').onclick = function() {
-    // Placeholder for QR code action
+    window.location.href = '/event/' + eventId + '/qr-checkin/?role=' + role + '&phone=' + phone;
 };
 // Walkie Talkie dropdown button logic (only for admins)
 var walkieBtn = document.getElementById('walkieDropdownBtn');

@@ -4,30 +4,68 @@
     <meta charset="utf-8">
     <title>Walkie Talkie - {{ event.event_name }}</title>
     <style>
-        body { font-family: Arial, sans-serif; margin: 20px; }
-        .panel { max-width: 640px; margin: auto; }
-        .peers { margin-top: 12px; }
-        button { padding: 10px 16px; font-size: 16px; }
-        #status { margin-top: 8px; color: #333; }
+        body {
+            background: #0b0f14;
+            font-family: sans-serif;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+
+        h1 { margin-bottom: 20px; }
+
+        /* Container to center button */
+        .ptt-container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            position: relative;
+        }
+
+        /* Circular button */
+        .ptt {
+            width: 140px;
+            height: 140px;
+            background: radial-gradient(circle at 30% 30%, #4ade80, #22c55e);
+            border: none;
+            border-radius: 50%;
+            color: #fff;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 0 20px rgba(34,197,94,0.6), 0 8px 20px rgba(0,0,0,0.5);
+            transition: transform 0.1s ease, box-shadow 0.2s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        /* Press effect */
+        .ptt:active {
+            transform: scale(0.92);
+            box-shadow: 0 0 10px rgba(34,197,94,0.7), inset 0 0 15px rgba(0,0,0,0.5);
+        }
     </style>
 </head>
 <body>
-<div class="panel">
-    <h1>Walkie-Talkie — {{ event.event_name }}</h1>
-    <p>Your peer id: <strong id="myPeer">{{ my_peer_id }}</strong></p>
-    <p>Logged in as volunteer phone: <strong>{{ phone }}</strong></p>
+    <div class="panel">
+        <h1>Walkie-Talkie</h1>
+        <h3>Event: {{ event.event_name }}</h3>
+        <p>Your peer id: <strong id="myPeer">{{ my_peer_id }}</strong></p>
+        <p>Logged in as volunteer phone: <strong>{{ phone }}</strong></p>
 
-    <div class="controls">
         <button id="connectBtn">Connect to Peers</button>
-        <button id="ptt" disabled>Push-to-talk (Hold)</button>
+        <div class="ptt-containerd">
+            <button class="ptt" id="holdBtn" hidden>Hold to Talk</button>
+        </div>
+        
+        <div class="peers">
+            <h3 hidden>Peers</h3>
+            <ul id="peersList"></ul>
+        </div>
     </div>
-    <div id="status">Status: <span id="statusText">idle</span></div>
-
-    <div class="peers">
-        <h3>Peers</h3>
-        <ul id="peersList"></ul>
-    </div>
-</div>
 
 <!-- PeerJS CDN -->
 <script src="https://unpkg.com/peerjs@1.4.7/dist/peerjs.min.js"></script>
@@ -39,24 +77,34 @@
     const connectBtn = document.getElementById('connectBtn');
     const ptt = document.getElementById('ptt');
     const peersList = document.getElementById('peersList');
-    const statusText = document.getElementById('statusText');
+    const btnText = document.getElementById('holdBtn');
 
     let peer = null;
     let localStream = null;
     let openConnections = {};
 
-    function logStatus(s){ statusText.textContent = s; }
+    function logStatus(s){ btnText.innerText = s; }
 
     function addPeerToList(id){
         const li = document.createElement('li');
         li.textContent = id;
         li.id = 'peer-' + id;
         peersList.appendChild(li);
+        if (peersList.children.length > 0){
+            peersList.previousElementSibling.hidden = false; // show "Peers" header
+        } else {
+            peersList.previousElementSibling.hidden = true; // hide "Peers" header
+        }
     }
 
     function removePeerFromList(id){
         const el = document.getElementById('peer-' + id);
         if(el) el.remove();
+        if (peersList.children.length > 0){
+            peersList.previousElementSibling.hidden = false; // show "Peers" header
+        } else {
+            peersList.previousElementSibling.hidden = true; // hide "Peers" header
+        }
     }
 
     async function ensureMicrophone(){
@@ -73,12 +121,12 @@
     connectBtn.addEventListener('click', async function(){
         if(peer) return;
         logStatus('initializing peer');
+        connectBtn.hidden = true;
+        btnText.hidden = false
         peer = new Peer(myPeerId, { debug: 2 });
+        logStatus('Hold to Talk');
 
         peer.on('open', id => {
-            logStatus('peer open: ' + id);
-            connectBtn.disabled = true;
-            ptt.disabled = false;
             // show peers
             otherPeers.forEach(p => addPeerToList(p));
         });
@@ -120,7 +168,7 @@
     // Push-to-talk behavior: while held, get mic and send stream to all peers
     ptt.addEventListener('mousedown', async () => {
         try{
-            logStatus('getting mic...');
+            // logStatus('getting mic...');
             const stream = await ensureMicrophone();
             logStatus('sending audio');
             // For each peer, call with stream
@@ -135,7 +183,8 @@
         }catch(e){ logStatus('mic denied'); }
     });
     ptt.addEventListener('mouseup', () => {
-        logStatus('idle');
+        logStatus('Hold to Speak');
+        holdBtn.innerText = "Talking..."
         // stop sending: close outgoing calls and stop tracks
         for(const pid in openConnections){
             try{ openConnections[pid].close(); }catch(e){}

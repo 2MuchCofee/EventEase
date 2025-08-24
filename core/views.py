@@ -1,3 +1,41 @@
+from django.http import JsonResponse
+from django.views.decorators.csrf import csrf_exempt
+from .models import Attendance
+# Check-In view for admins to see participant list
+def check_in(request, event_id):
+    event = get_object_or_404(Event, event_id=event_id)
+    role = request.GET.get('role', 'participant')
+    phone = request.GET.get('phone', '')
+    # Only allow admins
+    if role.lower() != 'admin':
+        return HttpResponseForbidden('Check-In access restricted to admins.')
+    # Assume event.participant_phone_numbers is a comma-separated string
+    participant_numbers = [n.strip() for n in (event.participant_phone_numbers or '').split(',') if n.strip()]
+    # Ensure Attendance objects exist for all participants
+    for p in participant_numbers:
+        Attendance.objects.get_or_create(event=event, phone=p)
+    attendance_map = {a.phone: a.checked_in for a in Attendance.objects.filter(event=event)}
+    return render(request, 'check_in.html', {
+        'event': event,
+        'role': role,
+        'phone': phone,
+        'participants': participant_numbers,
+        'attendance_map': attendance_map,
+    })
+
+# AJAX endpoint to mark attendance
+@csrf_exempt
+def mark_attendance(request):
+    if request.method == 'POST':
+        event_id = request.POST.get('event_id')
+        phone = request.POST.get('phone')
+        checked_in = request.POST.get('checked_in') == 'true'
+        event = Event.objects.get(event_id=event_id)
+        att, _ = Attendance.objects.get_or_create(event=event, phone=phone)
+        att.checked_in = checked_in
+        att.save()
+        return JsonResponse({'success': True})
+    return JsonResponse({'success': False}, status=400)
 
 from django.shortcuts import render, redirect, get_object_or_404
 from django.http import HttpResponseForbidden

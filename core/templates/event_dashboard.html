@@ -245,6 +245,12 @@
             <h4>Ticket Channel</h4>
             <a href="{% url 'ticket_channel' event.event_id %}?role={{ role }}&phone={{ phone }}" class="btn btn-outline-warning">Go to Tickets</a>
         </div>
+        {% if role|lower == 'admin' %}
+        <div class="dashboard-card">
+            <h4>Check-In</h4>
+            <a href="{% url 'check_in' event.event_id %}?role={{ role }}&phone={{ phone }}" class="btn btn-outline-warning">Go to Check-In</a>
+        </div>
+        {% endif %}
     </div>
 </div>
 </body>

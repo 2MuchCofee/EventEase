@@ -1,0 +1,131 @@
+{% load attendance_extras %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Check-In - {{ event.event_name }}</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Inter', Arial, sans-serif;
+            background: linear-gradient(135deg, #181c2f 0%, #232946 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .checkin-container {
+            background: rgba(30,34,54,0.98);
+            border-radius: 20px;
+            box-shadow: 0 6px 32px 0 rgba(0,0,0,0.25), 0 0 0 1.5px #232946;
+            padding: 2.5rem 2rem 2rem 2rem;
+            max-width: 420px;
+            width: 100%;
+            text-align: center;
+        }
+        h2 {
+            color: #eebd35;
+            margin-bottom: 1.2rem;
+        }
+        .participant-list {
+            background: #fff;
+            border-radius: 12px;
+            padding: 1.2rem 1rem;
+            margin-top: 1.2rem;
+            box-shadow: 0 2px 8px rgba(30,64,175,0.08);
+        }
+        .participant-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.7rem 0.5rem;
+            border-bottom: 1px solid #e0e0e0;
+            color: #232946;
+            font-weight: 500;
+        }
+        .participant-item:last-child {
+            border-bottom: none;
+        }
+        .custom-checkbox {
+            width: 24px;
+            height: 24px;
+            border-radius: 6px;
+            border: 2px solid #bbb;
+            background: #f3f3f3;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: border-color 0.2s, background 0.2s;
+            position: relative;
+        }
+        .custom-checkbox.checked {
+            background: #eebd35;
+            border-color: #eebd35;
+            transition: background 0.22s, border-color 0.22s;
+        }
+        .custom-checkbox svg {
+            opacity: 0;
+            transition: opacity 0.18s;
+        }
+        .custom-checkbox.checked svg {
+            opacity: 1;
+        }
+        .back-btn {
+            margin-top: 1.5rem;
+            background: #1976d2;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+            padding: 0.7rem 1.3rem;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.18s;
+        }
+        .back-btn:hover {
+            background: #1452a0;
+        }
+    </style>
+</head>
+<body>
+<div class="checkin-container">
+    <h2>Check-In: {{ event.event_name }}</h2>
+    <div><span style="color:#eebd35;">Event ID:</span> <strong>{{ event.event_id }}</strong></div>
+    <div class="participant-list">
+        {% if participants %}
+            {% for p in participants %}
+                <div class="participant-item">
+                    <span>{{ p }}</span>
+                    <span class="custom-checkbox{% if attendance_map|get_item:p %} checked{% endif %}" data-phone="{{ p }}" onclick="toggleAttendance(this)">
+                        <svg width="16" height="16" viewBox="0 0 20 20" fill="none" stroke="#232946" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="5 11 9 15 15 7" />
+                        </svg>
+                    </span>
+                </div>
+            {% endfor %}
+        {% else %}
+            <div style="color:#888;">No participants found.</div>
+        {% endif %}
+</body>
+<script>
+function toggleAttendance(el) {
+    el.classList.toggle('checked');
+    const checked = el.classList.contains('checked');
+    const phone = el.getAttribute('data-phone');
+    fetch("{% url 'mark_attendance' %}", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+            "X-CSRFToken": "{{ csrf_token }}"
+        },
+        body: `event_id={{ event.event_id }}&phone=${phone}&checked_in=${checked}`
+    });
+}
+</script>
+    </div>
+    <button class="back-btn" onclick="window.history.back()">Back</button>
+</div>
+</body>
+</html>

@@ -12,9 +12,9 @@ Our solution helps event organizers and participants interact seamlessly with un
 ---
 
 ## 🎥 Presentation Video
-<video src="assets/presentation.mp4" controls width="640" poster="assets/presentation-thumbnail.png">
-  Your browser does not support the video tag.
-</video>
+https://github.com/user-attachments/assets/afd14379-bca0-45ce-8d0f-f8ab79c015e9
+
+
 
 ## 📸 Screenshots
 _(Add your app screenshots or GIFs here – e.g., login page, check-in page, walkie-talkie UI)_

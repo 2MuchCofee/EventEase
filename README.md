@@ -1,6 +1,6 @@
-<div align="center">
-  <h1>Event<span style="color:cyan;">Easy!</span></h1>
-</div>
+<p align="center">
+  <img src="assets/logo.png" alt="EventEase Logo" width="320"/>
+</p>
 
 EventEase is a **full-stack Django application** built for managing and streamlining event workflows.  
 It was developed in **24 hours** during **Sphota Hackathon 2025**, hosted by  
@@ -11,11 +11,16 @@ Our solution helps event organizers and participants interact seamlessly with un
 
 ---
 
+## 🎥 Presentation Video
+<video src="assets/presentation.mp4" controls width="640" poster="assets/presentation-thumbnail.png">
+  Your browser does not support the video tag.
+</video>
+
 ## 📸 Screenshots
 _(Add your app screenshots or GIFs here – e.g., login page, check-in page, walkie-talkie UI)_
 
 ## 🔗 Live Demo
-[Live Demo Link](#) _(Replace with actual deployment URL if available)_
+[Live Demo Link](https://eventease-uowq.onrender.com)
 
 ---
 

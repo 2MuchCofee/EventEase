@@ -3,7 +3,7 @@
 </p>
 
 EventEase is a **full-stack Django application** built for managing and streamlining event workflows.  
-It was developed in **24 hours** during [**Sphota Hackathon 2025**]([http://ieee.org](https://www.sphota.ieee.uck.ac.in/), hosted by  
+It was developed in **24 hours** during [**Sphota Hackathon 2025**](https://www.sphota.ieee.uck.ac.in/), hosted by  
 **St. Thomas College of Engineering's IEEE club section** and  
 **University College of Engineering Kariavattom (UCEK)'s IEEE club divisions**.  
 

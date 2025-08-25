@@ -40,8 +40,8 @@ Built by a passionate team of four:
 
 - **[Abhishek M Raj](https://github.com/Prince-of-death)** – Backend & Frontend Development  
 - **[Munjidth](https://github.com/munjidvh)** – Backend & Frontend Development  
-- **[Akhil](#)** – Ideas, Roadmaps, Slides, Presentation & Strategy  
-- **[Nazeeh](#https://github.com/nazeeh-v)** – UI Design, Ideas, Presentation Support  
+- **[Akhil]()** – Ideas, Roadmaps, Slides, Presentation & Strategy  
+- **[Nazeeh](https://github.com/nazeeh-v)** – UI Design, Ideas, Presentation Support  
 
 
 ## 📜 License

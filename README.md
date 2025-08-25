@@ -30,7 +30,7 @@ _(Add your app screenshots or GIFs here – e.g., login page, check-in page, wal
 ## 🛠 Tech Stack
 - **Backend:** Django, Python  
 - **Frontend:** HTML, CSS, JavaScript (Django Templates)  
-- **Database:** SQLite / PostgreSQL  
+- **Database:** SQLite
 - **Deployment:** Render / GitHub  
 
 ---

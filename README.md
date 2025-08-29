@@ -44,7 +44,7 @@ _(Add your app screenshots or GIFs here – e.g., login page, check-in page, wal
 Built by a passionate team of four:
 
 - **[Abhishek M Raj](https://github.com/Prince-of-death)** – Backend & Frontend Development  
-- **[Munjidth](https://github.com/munjidvh)** – Backend & Frontend Development  
+- **[Munjid](https://github.com/munjidvh)** – Backend & Frontend Development  
 - **[Akhil]()** – Ideas, Roadmaps, Slides, Presentation & Strategy  
 - **[Nazeeh](https://github.com/nazeeh-v)** – UI Design, Ideas, Presentation Support  
 
